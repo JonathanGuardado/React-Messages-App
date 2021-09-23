@@ -6,9 +6,9 @@ import { MessageContextShape } from "../lib/types";
 import userEvent from "@testing-library/user-event";
 
 describe('MessagesTable', () => {
-  const getContext=(overrides?:any) => ({
+  const getContext = (overrides?: any) => ({
     ...contextDefaultValues,
-    isListening:true,
+    isListening: true,
     errorMessages: [
       {
         message: 'This is an error!',
@@ -18,7 +18,7 @@ describe('MessagesTable', () => {
     ],
     ...overrides
   });
-  const componentWithContext =(context:MessageContextShape) => (
+  const componentWithContext = (context: MessageContextShape) => (
     <MessagesContext.Provider value={context}>
       <MessagesTable />
     </MessagesContext.Provider>
@@ -29,8 +29,8 @@ describe('MessagesTable', () => {
   });
 
   test('stops listening messages if STOP is clicked', () => {
-    const setIsListeningCallback= jest.fn()
-    const context = getContext({setIsListening:setIsListeningCallback})
+    const setIsListeningCallback = jest.fn()
+    const context = getContext({ setIsListening: setIsListeningCallback })
     const { getByText } = render(componentWithContext(context));
     const stopBtn = getByText('STOP')
     expect(stopBtn).toBeInTheDocument();
@@ -39,8 +39,8 @@ describe('MessagesTable', () => {
   });
 
   test('starts listening messages if START is clicked', () => {
-    const setIsListeningCallback= jest.fn()
-    const context = getContext({setIsListening:setIsListeningCallback, isListening:false})
+    const setIsListeningCallback = jest.fn()
+    const context = getContext({ setIsListening: setIsListeningCallback, isListening: false })
     const { getByText } = render(componentWithContext(context));
     const startBtn = getByText('START')
     expect(startBtn).toBeInTheDocument();
@@ -49,8 +49,8 @@ describe('MessagesTable', () => {
   });
 
   test('clears all messages if CLEAR is clicked', () => {
-    const clearMessagesCallback= jest.fn()
-    const context = getContext({clearMessages:clearMessagesCallback})
+    const clearMessagesCallback = jest.fn()
+    const context = getContext({ clearMessages: clearMessagesCallback })
     const { getByText } = render(componentWithContext(context));
     const clearBtn = getByText('CLEAR')
     expect(clearBtn).toBeInTheDocument();
@@ -59,8 +59,8 @@ describe('MessagesTable', () => {
   });
 
   test('deletes a message if Clear message is clicked', () => {
-    const deleteMessageCallback= jest.fn()
-    const context = getContext({deleteMessage:deleteMessageCallback})
+    const deleteMessageCallback = jest.fn()
+    const context = getContext({ deleteMessage: deleteMessageCallback })
     const { getByTestId } = render(componentWithContext(context));
     const clearBtn = getByTestId('delete-card')
     expect(clearBtn).toBeInTheDocument();
@@ -68,20 +68,20 @@ describe('MessagesTable', () => {
     expect(deleteMessageCallback).toHaveBeenCalledWith(context.errorMessages[0])
   });
 
-  describe('Errors', ()=>{
+  describe('Errors', () => {
     test('shows a snackbar alert on new error received', () => {
       const { getAllByText, getByTestId } = render(componentWithContext(getContext()));
       const errorAlert = getByTestId('error-alert')
       expect(errorAlert).toBeInTheDocument();
       expect(getAllByText('This is an error!')).toHaveLength(2)
     });
-  
+
     test('closes the snackbar alert when X is clicked', async () => {
       const { getByRole, getAllByText } = render(componentWithContext(getContext()));
-      const closeBtn = getByRole('button', {name:'Close'})
+      const closeBtn = getByRole('button', { name: 'Close' })
       userEvent.click(closeBtn)
       expect(closeBtn).toBeInTheDocument();
-      await waitFor(()=>expect( getAllByText('This is an error!')).toHaveLength(1)) 
+      await waitFor(() => expect(getAllByText('This is an error!')).toHaveLength(1))
     });
   })
 })
